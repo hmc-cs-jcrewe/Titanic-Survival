@@ -20,7 +20,7 @@ class Classifier(object) :
     """
     Classifier interface.
     """
-    
+
     def fit(self, X, y):
         raise NotImplementedError()
         
@@ -104,11 +104,17 @@ class RandomClassifier(Classifier) :
             self -- an instance of self
         """
         
-        ### ========== TODO : START ========== ###
-        # part c: set self.probabilities_ according to the training set
-        
-        ### ========== TODO : END ========== ###
-        
+        # Generate the counts and probabilities for the majority and minority values 
+        vals, counts = np.unique(y, return_counts=True)
+        majority_val, majority_count = max(zip(vals, counts), key=lambda (val, count): count)
+        minority_val, minority_count = min(zip(vals, counts), key=lambda (val, count): count)
+        total_count = majority_count + minority_count
+        majority_probability = float(majority_count) / float(total_count)
+        minority_probability = float(minority_count) / float(total_count)
+
+        # Generate dictionary using the values calculated above
+        self.probabilities_ = {majority_val : majority_probability, minority_val : minority_probability}
+
         return self
     
     def predict(self, X, seed=1234) :
@@ -128,14 +134,8 @@ class RandomClassifier(Classifier) :
             raise Exception("Classifier not initialized. Perform a fit first.")
         np.random.seed(seed)
         
-        ### ========== TODO : START ========== ###
-        # part c: predict the class for each test example
-        # hint: use np.random.choice (be careful of the parameters)
-        
-        y = None
-        
-        ### ========== TODO : END ========== ###
-        
+        # np.random.choice assigns the keys into the array at the probability specified in its last parameter 
+        y = np.random.choice(self.probabilities_.keys(), len(X), True, self.probabilities_.values())
         return y
 
 
@@ -252,12 +252,14 @@ def main():
     print '\t-- training error: %.3f' % train_error
     
     
-    
-    ### ========== TODO : START ========== ###
-    # part c: evaluate training error of Random classifier
+    #========================================
+    # train Random classifier on data
     print 'Classifying using Random...'
-    
-    ### ========== TODO : END ========== ###
+    clf2 = RandomClassifier()   # create a Random classifier which includes all model parameters
+    clf2.fit(X,y)               # fit training data using the classifier 
+    y_pred = clf2.predict(X)    # take the classifier and run it on the training data 
+    train_error = 1 - metrics.accuracy_score(y, y_pred, normalize=True)
+    print '\t-- training error: %.3f' % train_error
     
     
     
