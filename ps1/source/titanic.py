@@ -156,7 +156,6 @@ def plot_histogram(X, y, Xname, yname) :
     """
     
     # set up data for plotting
-    print X
     targets = sorted(set(y))
     data = []; labels = []
     for target in targets :
@@ -199,12 +198,18 @@ def plot_scatter(X, y, Xnames, yname):
     # plot
     targets = sorted(set(y))
     plt.figure()
+
+    # set up data and labels
     ageData = X[:,0]
     fareData = X[:,1]
     labels = ["Did not survive", "Survived"]
-    for target in targets :
-        plt.scatter(ageData, fareData, c=y, label=labels[int(target)])
-        print 
+
+    # create scatter plot with labels
+    for target in targets:
+        age =  [ageData[i] for i in xrange(len(y)) if y[i] == target]
+        fare = [fareData[i] for i in xrange(len(y)) if y[i] == target]
+        plt.scatter(age, fare, label=labels[int(target)])
+
     plt.autoscale(enable=True)
     plt.xlabel(Xnames[0])
     plt.ylabel(Xnames[1])
@@ -228,17 +233,15 @@ def main():
     #========================================
     # plot histograms of each feature
     print 'Plotting...'
-    #for i in xrange(d) :
-    #    plot_histogram(X[:,i], y, Xname=Xnames[i], yname=yname)
+    for i in xrange(d) :
+       plot_histogram(X[:,i], y, Xname=Xnames[i], yname=yname)
     
     
     
     
-    ### ========== TODO : START ========== ###
     # part b: make scatterplot of age versus fare
     Xscatter = X[:,2:6:3]
     plot_scatter(Xscatter, y, Xnames = Xnames[2:6:3], yname = yname)
-    ### ========== TODO : END ========== ###
     
     
     
